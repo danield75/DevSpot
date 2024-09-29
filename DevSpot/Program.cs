@@ -1,7 +1,5 @@
-using DevSpot.Constants;
 using DevSpot.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.EntityFrameworkCore;
 
 namespace DevSpot
@@ -41,6 +39,7 @@ namespace DevSpot
             {
                 var services = scope.ServiceProvider;
                 RoleSeeder.SeedRolesAsync(services).Wait();
+                UserSeeder.SeedUsersAsync(services).Wait();
             }
 
             app.UseHttpsRedirection();

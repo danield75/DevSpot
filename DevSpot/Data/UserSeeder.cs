@@ -9,20 +9,35 @@ namespace DevSpot.Data
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-            if(await userManager.FindByEmailAsync("admin@devspot.com") == null)
+            await CreateUserWithRole(userManager, "admin@devspot.com", "Admin123!", Roles.ADMIN);
+            await CreateUserWithRole(userManager, "jobseeker@devspot.com", "JobSeeker123!", Roles.JOB_SEEKER);
+            await CreateUserWithRole(userManager, "employer@devspot.com", "Employer123!", Roles.EMPLOYER);
+        }
+
+        private static async Task CreateUserWithRole(
+            UserManager<IdentityUser> userManager,
+            string email,
+            string password,
+            string role)
+        {
+            if (await userManager.FindByEmailAsync(email) == null)
             {
                 var user = new IdentityUser
                 {
-                    Email = "admin@devspot.com",
+                    Email = email,
                     EmailConfirmed = true,
-                    UserName = "admin@devspot.com"
+                    UserName = email
                 };
 
-                var result = await userManager.CreateAsync(user, "Admin123!");
+                var result = await userManager.CreateAsync(user, password);
 
                 if (result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(user, Roles.ADMIN);
+                    await userManager.AddToRoleAsync(user, role);
+                }
+                else
+                {
+                    throw new Exception($"Failed creating user with email {user.Email}. Errors: {string.Join(",", result.Errors)}");
                 }
             }
         }
