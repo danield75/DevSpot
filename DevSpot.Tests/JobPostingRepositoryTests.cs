@@ -1,4 +1,5 @@
 ﻿using DevSpot.Data;
+using DevSpot.Models;
 using DevSpot.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,14 +26,27 @@ namespace DevSpot.Tests
 
             // job posting repository
             var repository = new JobPostingRepository(db);
-            
+
             // job posting
+            var jobPosting = new JobPosting
+            {
+                Title = "Test Title",
+                Description = "Test Description",
+                PostedDate = DateTime.Now,
+                Company = "Test Company",
+                Location = "Test Location",
+                UserId = "TestUserId"
+            };
 
             // execute
+            await repository.AddAsync(jobPosting);
 
             // result
+            var result = db.JobPostings.SingleOrDefault(jp => jp.Title == "Test Title");
 
             // assert
+            Assert.NotNull(result);
+            Assert.Equal("Test Description", result.Description);
         }
     }
 }
