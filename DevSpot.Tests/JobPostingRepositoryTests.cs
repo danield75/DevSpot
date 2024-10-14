@@ -85,5 +85,44 @@ namespace DevSpot.Tests
                 () => repository.GetByIdAsync(999)
             );
         }
+
+        [Fact]
+        public async Task GetAllAsync_ShouldReturnAllJobPostings()
+        {
+            // Arrange
+            var db = CreateDbContext();
+
+            var repository = new JobPostingRepository(db);
+
+            var jobPosting1 = new JobPosting
+            {
+                Title = "Test Title 1",
+                Description = "Test Description 1",
+                PostedDate = DateTime.Now,
+                Company = "Test Company 1",
+                Location = "Test Location 1",
+                UserId = "TestUserId 1"
+			};
+
+			var jobPosting2 = new JobPosting
+			{
+				Title = "Test Title 2",
+				Description = "Test Description 2",
+				PostedDate = DateTime.Now,
+				Company = "Test Company 2",
+				Location = "Test Location 2",
+				UserId = "TestUserId 2"
+			};
+
+			await db.JobPostings.AddRangeAsync(jobPosting1, jobPosting2);
+            await db.SaveChangesAsync();
+
+            // Act
+            var result = await repository.GetAllAsync();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count());
+        }
     }
 }
