@@ -11,10 +11,10 @@ namespace DevSpot.Controllers
 		private readonly UserManager<IdentityUser> _userManager;
 
 		public JobPostingsController(
-			IRepository<JobPosting> repositor,
+			IRepository<JobPosting> repository,
 			UserManager<IdentityUser> userManager)
 		{
-			_repository = repositor;
+			_repository = repository;
 			_userManager = userManager;
 		}
 
