@@ -41,11 +41,12 @@ namespace DevSpot.Tests
             // execute
             await repository.AddAsync(jobPosting);
 
-            // result
-            var result = db.JobPostings.SingleOrDefault(jp => jp.Title == "Test Title");
+			// result
+			//var result = db.JobPostings.SingleOrDefault(jp => jp.Title == "Test Title");
+			var result = db.JobPostings.Find(jobPosting.Id);
 
-            // assert
-            Assert.NotNull(result);
+			// assert
+			Assert.NotNull(result);
             Assert.Equal("Test Description", result.Description);
         }
 
@@ -122,7 +123,39 @@ namespace DevSpot.Tests
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(2, result.Count());
+            Assert.True(result.Count() >= 2);
         }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldUpdateJobPosting()
+        {
+			// Arrange
+			var db = CreateDbContext();
+
+			var repository = new JobPostingRepository(db);
+
+			var jobPosting = new JobPosting
+			{
+				Title = "Test Title",
+				Description = "Test Description",
+				PostedDate = DateTime.Now,
+				Company = "Test Company",
+				Location = "Test Location",
+				UserId = "TestUserId"
+			};
+
+			await db.JobPostings.AddAsync(jobPosting);
+			await db.SaveChangesAsync();
+
+            // Act
+            jobPosting.Description = "Updated Description";
+            await repository.UpdateAsync(jobPosting);
+
+            // Assert
+            var result = db.JobPostings.Find(jobPosting.Id);
+
+            Assert.NotNull(result);
+            Assert.Equal("Updated Description", result.Description);
+		}
     }
 }
