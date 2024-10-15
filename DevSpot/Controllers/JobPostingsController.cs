@@ -18,7 +18,13 @@ namespace DevSpot.Controllers
 			_userManager = userManager;
 		}
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
+		{
+			var jobPostings = await _repository.GetAllAsync();
+			return View(jobPostings);
+		}
+
+		public IActionResult Create()
 		{
 			return View();
 		}
