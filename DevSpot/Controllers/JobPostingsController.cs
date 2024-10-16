@@ -26,6 +26,13 @@ namespace DevSpot.Controllers
 		public async Task<IActionResult> Index()
 		{
 			var jobPostings = await _repository.GetAllAsync();
+
+			if (User.IsInRole(Roles.EMPLOYER))
+			{
+				var userId = _userManager.GetUserId(User);
+				jobPostings = jobPostings.Where(jp => jp.UserId == userId);
+			}
+
 			return View(jobPostings);
 		}
 
